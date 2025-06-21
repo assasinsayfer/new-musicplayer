@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="./images/img-icon/music notes.png">
+</head>
+<body>
+    <div class="container">
+        <div id="music-container" class="music-container">
+            <div class="music-info">
+                <h4 id="title">AGA - BAS GAZA</h4>
+                <div id="progress-container" class="progress-container">
+                    <div id="progress" class="progress"></div>
+                </div>
+            </div>
+            
+            <audio id="music" src=""></audio>
+            
+            <div class="img-container">
+                <img id="cover" src="/placeholder.svg?height=200&width=200" alt="Music Cover">
+            </div>
+            
+            <div class="navigation">
+                <button id="prev" class="action-btn">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button id="play" class="action-btn action-btn-big">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button id="next" class="action-btn">
+                    <i class="fas fa-forward"></i>
+                </button>
+            </div>
+            
+            <div class="volume-container">
+                <i class="fas fa-volume-down"></i>
+                <input type="range" id="volume" min="0" max="100" value="50" class="volume-slider">
+                <i class="fas fa-volume-up"></i>
+            </div>
+
+            <!-- Upload Modal -->
+            <div id="uploadModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Yangi Qo'shiq Qo'shish</h2>
+                    <form id="uploadForm">
+                        <div class="form-group">
+                            <label for="songName">Qo'shiq Nomi:</label>
+                            <input type="text" id="songName" placeholder="Masalan: Sevgi qo'shig'i" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="audioFile">Audio Fayl (MP3):</label>
+                            <input type="file" id="audioFile" accept=".mp3" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="imageFile">Rasm (JPG):</label>
+                            <input type="file" id="imageFile" accept=".jpg,.jpeg" required>
+                        </div>
+                        
+                        <div class="upload-buttons">
+                            <button type="submit" class="upload-btn">Qo'shiq Qo'shish</button>
+                            <button type="button" class="cancel-btn">Bekor qilish</button>
+                        </div>
+                    </form>
+                    
+                    <div class="storage-info">
+                        <p>Saqlangan qo'shiqlar: <span id="songCount">0</span>/15</p>
+                        <div class="storage-bar">
+                            <div id="storageProgress" class="storage-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Management Modal -->
+            <div id="manageModal" class="modal">
+                <div class="modal-content manage-modal">
+                    <span class="close-manage">&times;</span>
+                    <h2><i class="fas fa-music"></i> Qo'shiqlarni Boshqarish</h2>
+                    
+                    <div class="manage-tabs">
+                        <button class="tab-btn active" data-tab="custom">Yuklangan Qo'shiqlar</button>
+                        <button class="tab-btn" data-tab="settings">Sozlamalar</button>
+                    </div>
+
+                    <div class="tab-content" id="customTab">
+                        <div class="songs-list" id="songsList">
+                            <!-- Songs will be loaded here -->
+                        </div>
+                        <div class="empty-state" id="emptyState" style="display: none;">
+                            <i class="fas fa-music"></i>
+                            <p>Hali qo'shiq yuklanmagan</p>
+                            <small>Yangi qo'shiq qo'shish uchun "+" tugmasini bosing</small>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="settingsTab" style="display: none;">
+                        <div class="settings-section">
+                            <h3><i class="fas fa-trash"></i> Xavfli Amallar</h3>
+                            <div class="danger-zone">
+                                <button id="clearAllBtn" class="danger-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                    Barcha Qo'shiqlarni O'chirish
+                                </button>
+                                <p class="warning-text">⚠️ Bu amal qaytarib bo'lmaydi!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h3><i class="fas fa-info-circle"></i> Ma'lumot</h3>
+                            <div class="info-cards">
+                                <div class="info-card">
+                                    <i class="fas fa-database"></i>
+                                    <div>
+                                        <strong>Xotira</strong>
+                                        <span id="storageUsed">Hisoblanmoqda...</span>
+                                    </div>
+                                </div>
+                                <div class="info-card">
+                                    <i class="fas fa-calendar"></i>
+                                    <div>
+                                        <strong>Oxirgi Yangilanish</strong>
+                                        <span id="lastUpdate">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Modal -->
+            <div id="confirmModal" class="modal">
+                <div class="modal-content confirm-modal">
+                    <h3 id="confirmTitle">Tasdiqlash</h3>
+                    <p id="confirmMessage">Bu amalni bajarishni xohlaysizmi?</p>
+                    <div class="confirm-buttons">
+                        <button id="confirmYes" class="confirm-btn">Ha</button>
+                        <button id="confirmNo" class="cancel-btn">Yo'q</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Modal -->
+            <div id="helperModal" class="modal-helper-overlay">
+                <div class="modal-helper-content">
+                    <span id="closeModalBtn" class="modal-helper-close">&times;</span>
+                    <h2><i class="fas fa-info-circle"></i> Foydalanish yo'riqnomasi</h2>
+                    <div class="instructions">
+                        <div class="instruction-item">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Play/Pause tugmasi bilan musiqa boshqaring</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-step-forward"></i>
+                            <span>Next/Previous tugmalari bilan qo'shiqlar orasida o'ting</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Volume slider bilan ovoz balandligini sozlang</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>"Qo'shiq Qo'shish" tugmasini bosing</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-edit"></i>
+                            <span>Qo'shiq nomini kiriting</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-music"></i>
+                            <span>MP3 audio faylni yuklang</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-image"></i>
+                            <span>JPG rasm faylni yuklang</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-cog"></i>
+                            <span>"Boshqarish" tugmasi orqali qo'shiqlarni o'chiring</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <p><strong>Maksimal:</strong> 15 ta qo'shiq saqlash mumkin</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="openModalBtn" class="help-btn">
+                    <i class="fas fa-question-circle"></i>
+                    Foydalanish
+                </button>
+                
+                <button id="manageBtn" class="manage-btn">
+                    <i class="fas fa-cog"></i>
+                    Boshqarish
+                </button>
+                
+                <button id="uploadBtn" class="upload-trigger">
+                    <i class="fas fa-plus"></i>
+                    Qo'shiq Qo'shish
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/upload.js"></script>
+    <script src="js/manage.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/helper.js"></script>
+</body>
+</html>
