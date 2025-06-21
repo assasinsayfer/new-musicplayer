@@ -23,7 +23,7 @@ function updateSongsList() {
   songs.push(
     ...[
       "AGA - BAS GAZA",
-      "Ale eves on me",
+      "Ale eyes on me",
       "Alleya",
       ...customSongs,
     ],
